@@ -1,0 +1,266 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="utf-8" />
+    <title>WorkWall</title>
+    <link rel="stylesheet" href="styles.css" />
+    <style>
+      body {
+        width: 360px;
+        background: var(--surface);
+      }
+      .wrap {
+        padding: 16px 18px 18px;
+        display: grid;
+        gap: 18px;
+      }
+      .bar {
+        display: flex;
+        align-items: center;
+        justify-content: space-between;
+        gap: 8px;
+      }
+      .bar-actions {
+        display: flex;
+        gap: 2px;
+      }
+      .hero {
+        display: grid;
+        gap: 6px;
+      }
+      .hero-row {
+        display: flex;
+        align-items: baseline;
+        justify-content: space-between;
+        gap: 12px;
+      }
+      .total {
+        font-size: 40px;
+        font-weight: 650;
+        line-height: 1.05;
+      }
+      .split {
+        display: flex;
+        gap: 14px;
+        font-size: 12.5px;
+        color: var(--text-2);
+      }
+      .split span {
+        display: inline-flex;
+        align-items: center;
+        gap: 6px;
+      }
+      .split b {
+        font-weight: 600;
+        color: var(--text);
+      }
+      .split i {
+        width: 8px;
+        height: 8px;
+        border-radius: 2px;
+      }
+      .strip {
+        margin-top: 8px;
+      }
+      .mini-stats {
+        display: grid;
+        grid-template-columns: repeat(3, 1fr);
+        gap: 1px;
+        border-radius: var(--radius);
+        overflow: hidden;
+        background: var(--border);
+        border: 1px solid var(--border);
+      }
+      .mini-stats div {
+        background: var(--surface);
+        padding: 10px 12px;
+        display: grid;
+      }
+      .mini-stats b {
+        font-size: 20px;
+        font-weight: 650;
+        line-height: 1.2;
+      }
+      .mini-stats span {
+        font-size: 11.5px;
+        color: var(--text-3);
+        line-height: 1.3;
+      }
+      .mini-stats em {
+        position: absolute;
+        width: 1px;
+        height: 1px;
+        overflow: hidden;
+        clip-path: inset(50%);
+      }
+      .section-head {
+        display: flex;
+        justify-content: space-between;
+        align-items: baseline;
+        margin-bottom: 8px;
+      }
+      .sites {
+        list-style: none;
+        margin: 0;
+        padding: 0;
+        display: grid;
+        gap: 2px;
+      }
+      .site {
+        display: grid;
+        grid-template-columns: 16px 1fr auto;
+        align-items: center;
+        column-gap: 10px;
+        row-gap: 5px;
+        padding: 8px 10px;
+        margin: 0 -10px;
+        border-radius: 10px;
+      }
+      .site:hover {
+        background: var(--surface-2);
+      }
+      .site-name {
+        display: flex;
+        align-items: center;
+        gap: 6px;
+        min-width: 0;
+        font-weight: 550;
+        font-size: 13.5px;
+      }
+      .site-name span {
+        overflow: hidden;
+        text-overflow: ellipsis;
+        white-space: nowrap;
+      }
+      .site-name .icon {
+        width: 12px;
+        height: 12px;
+        color: var(--text-3);
+      }
+      .site-time {
+        font-size: 13px;
+        color: var(--text-2);
+      }
+      .track {
+        grid-column: 2 / 4;
+        height: 4px;
+        border-radius: 4px;
+        background: var(--surface-3);
+        overflow: hidden;
+      }
+      .track div {
+        height: 100%;
+        border-radius: 4px;
+        background: var(--accent);
+        transform-origin: left;
+        animation: grow 0.6s var(--ease) both;
+      }
+      @keyframes grow {
+        from {
+          transform: scaleX(0);
+        }
+      }
+      .empty {
+        padding: 18px;
+        border-radius: var(--radius);
+        background: var(--surface-2);
+        color: var(--text-2);
+        font-size: 13px;
+        text-align: center;
+      }
+      .footer {
+        display: grid;
+        grid-template-columns: 1fr auto;
+        gap: 8px;
+      }
+      .banner {
+        display: flex;
+        align-items: center;
+        justify-content: space-between;
+        gap: 12px;
+        padding: 12px 14px;
+        border-radius: var(--radius);
+        background: var(--free-soft);
+        color: var(--text);
+      }
+      .banner b {
+        font-weight: 650;
+      }
+      .break {
+        display: grid;
+        gap: 14px;
+      }
+      .break h2 {
+        font-family: var(--font-display);
+        font-size: 22px;
+        font-weight: 700;
+        letter-spacing: -0.02em;
+      }
+      .break-actions {
+        display: grid;
+        grid-template-columns: 1fr 1fr;
+        gap: 8px;
+      }
+    </style>
+    <script type="module" src="popup.js"></script>
+  </head>
+  <body>
+    <div class="wrap" id="main">
+      <div class="bar">
+        <span class="brand"><span class="logo"></span>WorkWall</span>
+        <div class="bar-actions">
+          <button class="btn ghost icon-btn" id="open-settings" title="Settings" aria-label="Settings">
+            <svg class="icon" viewBox="0 0 24 24"><circle cx="12" cy="12" r="3"/><path d="M19.4 15a1.7 1.7 0 0 0 .3 1.8l.1.1a2 2 0 1 1-2.8 2.8l-.1-.1a1.7 1.7 0 0 0-1.8-.3 1.7 1.7 0 0 0-1 1.5V21a2 2 0 1 1-4 0v-.1a1.7 1.7 0 0 0-1.1-1.5 1.7 1.7 0 0 0-1.8.3l-.1.1a2 2 0 1 1-2.8-2.8l.1-.1a1.7 1.7 0 0 0 .3-1.8 1.7 1.7 0 0 0-1.5-1H3a2 2 0 1 1 0-4h.1a1.7 1.7 0 0 0 1.5-1.1 1.7 1.7 0 0 0-.3-1.8l-.1-.1a2 2 0 1 1 2.8-2.8l.1.1a1.7 1.7 0 0 0 1.8.3H9a1.7 1.7 0 0 0 1-1.5V3a2 2 0 1 1 4 0v.1a1.7 1.7 0 0 0 1 1.5 1.7 1.7 0 0 0 1.8-.3l.1-.1a2 2 0 1 1 2.8 2.8l-.1.1a1.7 1.7 0 0 0-.3 1.8V9a1.7 1.7 0 0 0 1.5 1H21a2 2 0 1 1 0 4h-.1a1.7 1.7 0 0 0-1.5 1z"/></svg>
+          </button>
+        </div>
+      </div>
+
+      <div id="paused-banner" class="banner" hidden>
+        <span>On a break · <b class="num" id="break-left"></b> left</span>
+        <button class="btn sm" id="end-break">End break</button>
+      </div>
+
+      <section class="hero">
+        <div class="hero-row">
+          <span class="eyebrow">Today</span>
+          <span class="pill" id="status"></span>
+        </div>
+        <div class="total display" id="total">0m</div>
+        <div class="split">
+          <span><i class="fill-focus"></i><span><b class="num" id="focus-time">0m</b> in focus hours</span></span>
+          <span><i class="fill-free"></i><span><b class="num" id="free-time">0m</b> free time</span></span>
+        </div>
+        <div class="strip" id="strip"></div>
+      </section>
+
+      <section class="mini-stats">
+        <div><b class="display" id="attempts">0</b><span id="attempts-meta"></span><em>Blocked attempts</em></div>
+        <div><b class="display" id="breaks">0</b><span id="breaks-meta"></span><em>Rule breaks</em></div>
+        <div><b class="display" id="streak">0</b><span id="streak-meta"></span><em>Streak</em></div>
+      </section>
+
+      <section>
+        <div class="section-head">
+          <span class="eyebrow">Top sites</span>
+        </div>
+        <ul class="sites" id="sites"></ul>
+      </section>
+
+      <div class="footer">
+        <button class="btn primary" id="open-dashboard">Open dashboard</button>
+        <button class="btn" id="take-break" hidden>Take a break</button>
+      </div>
+    </div>
+
+    <div class="wrap break" id="break" hidden>
+      <span class="brand"><span class="logo"></span>WorkWall</span>
+      <h2>Take a <span id="break-minutes"></span>-minute break?</h2>
+      <p class="muted">Blocking pauses, then turns itself back on. This is logged as a <b>rule break</b>. To confirm, type:</p>
+      <div id="phrase-slot"></div>
+      <div class="break-actions">
+        <button class="btn" id="cancel-break">Stay focused</button>
+        <button class="btn primary" id="start-break" disabled>Start break</button>
+      </div>
+    </div>
+  </body>
+</html>

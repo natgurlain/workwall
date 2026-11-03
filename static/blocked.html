@@ -1,0 +1,222 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <title>Focus time · WorkWall</title>
+    <link rel="icon" href="icons/on-32.png" />
+    <link rel="stylesheet" href="styles.css" />
+    <style>
+      body {
+        min-height: 100vh;
+        overflow-x: hidden;
+      }
+      .stage {
+        position: relative;
+        min-height: 100vh;
+        display: grid;
+        grid-template-rows: auto 1fr auto;
+        padding: 24px 16px;
+        isolation: isolate;
+      }
+      .glow {
+        position: fixed;
+        inset: -20vmax;
+        z-index: -1;
+        background:
+          radial-gradient(40vmax 30vmax at 50% 38%, color-mix(in srgb, var(--accent) 16%, transparent), transparent 70%),
+          radial-gradient(30vmax 22vmax at 70% 70%, color-mix(in srgb, var(--accent) 7%, transparent), transparent 70%);
+        animation: drift 18s ease-in-out infinite alternate;
+      }
+      body.free .glow {
+        background: radial-gradient(40vmax 30vmax at 50% 38%, color-mix(in srgb, var(--good) 12%, transparent), transparent 70%);
+      }
+      @keyframes drift {
+        to {
+          transform: translate3d(2vmax, -1.5vmax, 0) scale(1.05);
+        }
+      }
+      .top {
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+        max-width: 1080px;
+        width: 100%;
+        margin: 0 auto;
+      }
+      .center {
+        display: flex;
+        flex-direction: column;
+        align-items: center;
+        justify-content: center;
+        text-align: center;
+        gap: 18px;
+        padding: 32px 0;
+      }
+      .site-chip {
+        display: inline-flex;
+        align-items: center;
+        gap: 9px;
+        height: 34px;
+        padding: 0 14px 0 10px;
+        border-radius: 999px;
+        background: var(--surface);
+        border: 1px solid var(--border);
+        box-shadow: var(--shadow-sm);
+        font-size: 13px;
+        font-weight: 550;
+        color: var(--text-2);
+      }
+      .site-chip .lock {
+        color: var(--text-3);
+      }
+      .headline {
+        font-family: var(--font-display);
+        font-size: clamp(30px, 5vw, 46px);
+        font-weight: 700;
+        letter-spacing: -0.035em;
+        line-height: 1.08;
+        max-width: 16ch;
+        text-wrap: balance;
+      }
+      .lede {
+        font-size: 16px;
+        color: var(--text-2);
+        max-width: 44ch;
+        text-wrap: balance;
+      }
+      .ring-wrap {
+        position: relative;
+        width: min(260px, 70vw);
+        aspect-ratio: 1;
+        margin: 10px 0 6px;
+      }
+      .ring {
+        width: 100%;
+        height: 100%;
+        transform: rotate(-90deg);
+      }
+      .ring .track {
+        fill: none;
+        stroke: var(--surface-3);
+        stroke-width: 10;
+      }
+      .ring .progress {
+        fill: none;
+        stroke: url(#ringGradient);
+        stroke-width: 10;
+        stroke-linecap: round;
+        transition: stroke-dashoffset 1s linear;
+      }
+      .ring .tick {
+        stroke: var(--border-strong);
+        stroke-width: 1.5;
+        stroke-linecap: round;
+      }
+      .ring-center {
+        position: absolute;
+        inset: 0;
+        display: grid;
+        place-content: center;
+        gap: 4px;
+      }
+      .countdown {
+        font-size: clamp(38px, 7vw, 50px);
+        font-weight: 600;
+        line-height: 1;
+      }
+      .countdown small {
+        font-size: 0.5em;
+        color: var(--text-3);
+        font-weight: 500;
+        margin-left: 1px;
+      }
+      .actions {
+        display: flex;
+        flex-wrap: wrap;
+        justify-content: center;
+        gap: 10px;
+        margin-top: 6px;
+      }
+      .stats {
+        display: grid;
+        grid-template-columns: repeat(3, minmax(0, 1fr));
+        gap: 1px;
+        max-width: 620px;
+        width: 100%;
+        margin: 0 auto;
+        background: var(--border);
+        border: 1px solid var(--border);
+        border-radius: var(--radius);
+        overflow: hidden;
+        box-shadow: var(--shadow-sm);
+      }
+      .stat {
+        background: var(--surface);
+        padding: 14px 16px;
+        text-align: center;
+      }
+      .stat-value {
+        font-size: 20px;
+        font-weight: 650;
+      }
+      .stat-label {
+        font-size: 12px;
+        color: var(--text-3);
+        margin-top: 2px;
+      }
+      .rise:nth-child(2) { animation-delay: 60ms; }
+      .rise:nth-child(3) { animation-delay: 120ms; }
+      .rise:nth-child(4) { animation-delay: 180ms; }
+      .rise:nth-child(5) { animation-delay: 240ms; }
+      @media (max-width: 520px) {
+        .stats {
+          grid-template-columns: 1fr;
+        }
+      }
+    </style>
+    <script type="module" src="blocked.js"></script>
+  </head>
+  <body>
+    <main class="stage">
+      <div class="glow" aria-hidden="true"></div>
+      <header class="top">
+        <a class="brand" href="dashboard.html"><span class="logo"></span>WorkWall</a>
+        <span class="pill on" id="pill">Focus on</span>
+      </header>
+
+      <section class="center">
+        <div class="site-chip rise" id="chip"></div>
+        <h1 class="headline rise" id="headline">Back to what matters.</h1>
+        <p class="lede rise" id="lede"></p>
+        <div class="ring-wrap rise" aria-live="polite">
+          <svg class="ring" viewBox="0 0 240 240" aria-hidden="true">
+            <defs>
+              <linearGradient id="ringGradient" x1="0" y1="0" x2="1" y2="1">
+                <stop offset="0%" style="stop-color: var(--accent-strong)" />
+                <stop offset="100%" style="stop-color: var(--accent)" />
+              </linearGradient>
+            </defs>
+            <g id="ticks"></g>
+            <circle class="track" cx="120" cy="120" r="104" />
+            <circle class="progress" id="progress" cx="120" cy="120" r="104" />
+          </svg>
+          <div class="ring-center">
+            <div class="countdown display" id="countdown">–</div>
+            <div class="eyebrow" id="until"></div>
+          </div>
+        </div>
+        <div class="actions rise">
+          <button class="btn lg primary" id="primary">Go back</button>
+          <a class="btn lg" href="dashboard.html">See where your time goes</a>
+        </div>
+      </section>
+
+      <footer class="stats rise">
+        <div class="stat"><div class="stat-value display" id="stat-today">–</div><div class="stat-label" id="stat-today-label">Tries today</div></div>
+        <div class="stat"><div class="stat-value display" id="stat-week">–</div><div class="stat-label" id="stat-week-label">Attempts in 7 days</div></div>
+        <div class="stat"><div class="stat-value display" id="stat-streak">–</div><div class="stat-label">Without a rule break</div></div>
+      </footer>
+    </main>
+  </body>
+</html>

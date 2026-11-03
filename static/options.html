@@ -1,0 +1,288 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <title>Settings · WorkWall</title>
+    <link rel="icon" href="icons/on-32.png" />
+    <link rel="stylesheet" href="styles.css" />
+    <style>
+      .page {
+        max-width: 760px;
+        margin: 0 auto;
+        padding: 28px 16px 64px;
+        display: grid;
+        gap: 18px;
+      }
+      .top {
+        display: flex;
+        align-items: center;
+        justify-content: space-between;
+        gap: 12px;
+        margin-bottom: 10px;
+      }
+      h1 {
+        font-family: var(--font-display);
+        font-size: 30px;
+        font-weight: 700;
+        letter-spacing: -0.03em;
+      }
+      .lock-banner {
+        display: flex;
+        gap: 12px;
+        align-items: flex-start;
+        padding: 14px 16px;
+        border-radius: var(--radius);
+        background: var(--accent-soft);
+        color: var(--text);
+        font-size: 13.5px;
+      }
+      .lock-banner .icon {
+        margin-top: 2px;
+        color: var(--accent-strong);
+      }
+      .add-row {
+        display: flex;
+        gap: 8px;
+      }
+      .add-row .input {
+        flex: 1;
+      }
+      .error {
+        color: var(--danger);
+        font-size: 12.5px;
+        min-height: 18px;
+        margin-top: 6px;
+      }
+      .chips {
+        display: flex;
+        flex-wrap: wrap;
+        gap: 8px;
+        margin-top: 6px;
+      }
+      .chip {
+        display: inline-flex;
+        align-items: center;
+        gap: 8px;
+        height: 34px;
+        padding: 0 4px 0 11px;
+        border-radius: 999px;
+        background: var(--surface-2);
+        border: 1px solid var(--border);
+        font-size: 13px;
+        font-weight: 550;
+      }
+      .chip.new {
+        animation: rise 0.3s var(--ease) both;
+      }
+      .chip button {
+        width: 26px;
+        height: 26px;
+        border-radius: 50%;
+        border: 0;
+        background: transparent;
+        color: var(--text-3);
+        cursor: pointer;
+        display: grid;
+        place-items: center;
+      }
+      .chip button:hover:not(:disabled) {
+        background: var(--danger-soft);
+        color: var(--danger);
+      }
+      .chip button:disabled {
+        cursor: not-allowed;
+        opacity: 0.4;
+      }
+      .presets {
+        display: flex;
+        flex-wrap: wrap;
+        align-items: center;
+        gap: 6px;
+        margin-top: 16px;
+        padding-top: 16px;
+        border-top: 1px solid var(--border);
+      }
+      .presets .label {
+        font-size: 12.5px;
+        color: var(--text-3);
+        margin-right: 4px;
+      }
+      .times {
+        display: grid;
+        grid-template-columns: 1fr 1fr;
+        gap: 12px;
+      }
+      .field {
+        display: grid;
+        gap: 6px;
+        font-size: 12.5px;
+        font-weight: 550;
+        color: var(--text-2);
+      }
+      .field .input {
+        font-size: 18px;
+        height: 48px;
+        font-variant-numeric: tabular-nums;
+      }
+      .days {
+        display: flex;
+        flex-wrap: wrap;
+        gap: 8px;
+        margin-top: 16px;
+      }
+      .day {
+        width: 44px;
+        height: 44px;
+        border-radius: 50%;
+        border: 1px solid var(--border-strong);
+        background: var(--surface);
+        font-weight: 600;
+        font-size: 13px;
+        cursor: pointer;
+        color: var(--text-2);
+        transition: background 0.15s, color 0.15s, border-color 0.15s, transform 0.15s var(--ease);
+      }
+      .day:active {
+        transform: scale(0.94);
+      }
+      .day[aria-pressed="true"] {
+        background: var(--accent);
+        border-color: transparent;
+        color: var(--accent-ink);
+      }
+      .day:disabled {
+        cursor: not-allowed;
+        opacity: 0.6;
+      }
+      .summary {
+        margin-top: 16px;
+        padding: 12px 14px;
+        border-radius: var(--radius);
+        background: var(--surface-2);
+        font-size: 13.5px;
+        color: var(--text-2);
+      }
+      .summary b {
+        color: var(--text);
+        font-weight: 650;
+      }
+      .row {
+        display: flex;
+        flex-wrap: wrap;
+        gap: 8px;
+      }
+      dialog.confirm[open] {
+        width: min(440px, calc(100vw - 32px));
+        border: 1px solid var(--border);
+        border-radius: var(--radius-lg);
+        background: var(--surface);
+        color: var(--text);
+        box-shadow: var(--shadow-lg);
+        padding: 24px;
+        display: grid;
+        gap: 12px;
+        animation: rise 0.25s var(--ease) both;
+      }
+      dialog.confirm::backdrop {
+        background: rgba(11, 11, 11, 0.35);
+        backdrop-filter: blur(4px);
+      }
+      dialog.confirm h2 {
+        font-family: var(--font-display);
+        font-size: 21px;
+        letter-spacing: -0.02em;
+      }
+      dialog.confirm ul {
+        margin: 0;
+        padding: 10px 14px 10px 30px;
+        border-radius: 12px;
+        background: var(--free-soft);
+        font-weight: 550;
+      }
+      .confirm-actions {
+        display: grid;
+        grid-template-columns: 1fr 1fr;
+        gap: 8px;
+        margin-top: 4px;
+      }
+      .foot {
+        text-align: center;
+        font-size: 12.5px;
+        color: var(--text-3);
+        margin-top: 8px;
+      }
+      @media (max-width: 520px) {
+        .times {
+          grid-template-columns: 1fr;
+        }
+      }
+    </style>
+    <script type="module" src="options.js"></script>
+  </head>
+  <body>
+    <main class="page">
+      <header class="top">
+        <a class="brand" href="dashboard.html"><span class="logo"></span>WorkWall</a>
+        <a class="btn ghost sm" href="dashboard.html">Dashboard →</a>
+      </header>
+      <h1>Settings</h1>
+
+      <div class="lock-banner rise" id="lock-banner" hidden>
+        <svg class="icon" viewBox="0 0 24 24"><rect x="5" y="11" width="14" height="10" rx="2.5" /><path d="M8 11V8a4 4 0 0 1 8 0v3" /></svg>
+        <div><b>Focus hours are on until <span id="unlock-at"></span>.</b> Adding sites is fine. Removing a site or shortening focus hours now counts as a rule break.</div>
+      </div>
+
+      <section class="card rise">
+        <div class="card-head">
+          <div>
+            <h2 class="card-title">Blocked sites</h2>
+            <p class="card-sub">Subdomains are included — blocking <b>reddit.com</b> also blocks old.reddit.com.</p>
+          </div>
+          <span class="faint num" id="site-count"></span>
+        </div>
+        <form class="add-row" id="add-form">
+          <input class="input" id="add-input" placeholder="Add a site, e.g. youtube.com" autocomplete="off" spellcheck="false" aria-label="Site to block" />
+          <button class="btn primary" type="submit">Add</button>
+        </form>
+        <div class="error" id="add-error" role="alert"></div>
+        <div class="chips" id="chips"></div>
+        <div class="presets" id="presets"><span class="label">Quick add</span></div>
+      </section>
+
+      <section class="card rise">
+        <div class="card-head">
+          <div>
+            <h2 class="card-title">Focus hours</h2>
+            <p class="card-sub">Blocking turns on and off by itself. An end time earlier than the start runs overnight.</p>
+          </div>
+        </div>
+        <div class="times">
+          <label class="field">Starts<input class="input" type="time" id="start" /></label>
+          <label class="field">Ends<input class="input" type="time" id="end" /></label>
+        </div>
+        <div class="days" id="days" role="group" aria-label="Days with focus hours"></div>
+        <div class="row" style="margin-top: 12px">
+          <button class="btn ghost sm" id="weekdays">Weekdays</button>
+          <button class="btn ghost sm" id="everyday">Every day</button>
+        </div>
+        <p class="summary" id="summary"></p>
+      </section>
+
+      <section class="card rise">
+        <div class="card-head">
+          <div>
+            <h2 class="card-title">Your data</h2>
+            <p class="card-sub">Stats for the last 90 days, stored only in this browser.</p>
+          </div>
+        </div>
+        <div class="row">
+          <button class="btn" id="export">Export JSON</button>
+          <button class="btn danger" id="clear">Delete all stats</button>
+        </div>
+      </section>
+
+      <p class="foot">WorkWall runs entirely on your device. No accounts, no servers, no tracking.</p>
+    </main>
+  </body>
+</html>

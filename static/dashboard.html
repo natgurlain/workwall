@@ -1,0 +1,480 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <title>Dashboard · WorkWall</title>
+    <link rel="icon" href="icons/on-32.png" />
+    <link rel="stylesheet" href="styles.css" />
+    <style>
+      .page {
+        max-width: 1120px;
+        margin: 0 auto;
+        padding: 24px 16px 64px;
+      }
+      .topbar {
+        display: flex;
+        align-items: center;
+        justify-content: space-between;
+        gap: 12px;
+        flex-wrap: wrap;
+      }
+      .topbar-right {
+        display: flex;
+        align-items: center;
+        gap: 10px;
+      }
+      .heading {
+        display: flex;
+        align-items: flex-end;
+        justify-content: space-between;
+        gap: 16px;
+        flex-wrap: wrap;
+        margin: 36px 0 22px;
+      }
+      h1 {
+        font-family: var(--font-display);
+        font-size: clamp(28px, 4vw, 38px);
+        font-weight: 700;
+        letter-spacing: -0.035em;
+        line-height: 1.1;
+      }
+      .range-label {
+        margin-top: 6px;
+        color: var(--text-2);
+        font-size: 14px;
+      }
+      .grid {
+        display: grid;
+        gap: 16px;
+      }
+      .kpis {
+        grid-template-columns: repeat(4, minmax(0, 1fr));
+      }
+      .two {
+        grid-template-columns: minmax(0, 3fr) minmax(0, 2fr);
+      }
+      .kpi {
+        padding: 18px 20px;
+        display: grid;
+        gap: 6px;
+        align-content: start;
+      }
+      .kpi-value {
+        font-size: 30px;
+        font-weight: 650;
+        line-height: 1.1;
+        display: flex;
+        align-items: center;
+        gap: 10px;
+        min-width: 0;
+      }
+      .kpi-value.site {
+        font-family: var(--font);
+        font-size: 18px;
+        letter-spacing: -0.01em;
+        padding: 6px 0 3px;
+      }
+      .kpi-value.site span {
+        overflow: hidden;
+        text-overflow: ellipsis;
+        white-space: nowrap;
+      }
+      .kpi-meta {
+        font-size: 12.5px;
+        color: var(--text-3);
+      }
+      .delta {
+        font-weight: 600;
+        color: var(--text-2);
+      }
+      .rows {
+        list-style: none;
+        margin: 0;
+        padding: 0;
+        display: grid;
+        gap: 2px;
+      }
+      .row {
+        display: grid;
+        grid-template-columns: 16px minmax(90px, 180px) 1fr 64px 40px;
+        align-items: center;
+        gap: 12px;
+        padding: 7px 10px;
+        margin: 0 -10px;
+        border-radius: 10px;
+        font-size: 13.5px;
+        cursor: default;
+      }
+      .row:hover,
+      .row:focus-visible {
+        background: var(--surface-2);
+      }
+      .row-name {
+        display: flex;
+        align-items: center;
+        gap: 6px;
+        min-width: 0;
+        font-weight: 550;
+      }
+      .row-name span {
+        overflow: hidden;
+        text-overflow: ellipsis;
+        white-space: nowrap;
+      }
+      .row-name .icon {
+        width: 12px;
+        height: 12px;
+        color: var(--text-3);
+        flex: none;
+      }
+      .row-bar {
+        height: 10px;
+        border-radius: 0 4px 4px 0;
+        background: var(--accent);
+        transform-origin: left;
+        animation: grow 0.6s var(--ease) both;
+        min-width: 3px;
+      }
+      @keyframes grow {
+        from {
+          transform: scaleX(0);
+        }
+      }
+      .row-time {
+        text-align: right;
+        font-variant-numeric: tabular-nums;
+        color: var(--text);
+      }
+      .row-share {
+        text-align: right;
+        font-variant-numeric: tabular-nums;
+        color: var(--text-3);
+        font-size: 12.5px;
+      }
+      .trend-key {
+        width: 18px !important;
+        height: 0 !important;
+        border-radius: 0 !important;
+        border-top: 2px dashed var(--text);
+        opacity: 0.7;
+      }
+      .urge-sites {
+        margin-top: 18px;
+        padding-top: 14px;
+        border-top: 1px solid var(--border);
+      }
+      .urge-head,
+      .urge-sites .row {
+        display: grid;
+        grid-template-columns: 16px minmax(110px, 200px) minmax(0, 1fr) 72px 92px;
+        gap: 14px;
+        align-items: center;
+      }
+      .urge-head {
+        font-size: 11.5px;
+        font-weight: 600;
+        color: var(--text-3);
+        padding: 0 0 6px;
+      }
+      .urge-head span:nth-child(n + 4),
+      .urge-sites .num-cell {
+        text-align: right;
+        font-variant-numeric: tabular-nums;
+      }
+      .change {
+        font-size: 12.5px;
+        font-weight: 600;
+        color: var(--text-2);
+      }
+      .change.down {
+        color: var(--good);
+      }
+      .change.up {
+        color: var(--danger);
+      }
+      .break-kinds {
+        display: grid;
+        grid-template-columns: repeat(2, minmax(0, 1fr));
+        gap: 8px;
+      }
+      .kind {
+        padding: 10px 12px;
+        border-radius: 12px;
+        background: var(--surface-2);
+        display: grid;
+        gap: 2px;
+      }
+      .kind b {
+        font-family: var(--font-display);
+        font-size: 20px;
+        font-weight: 650;
+        font-variant-numeric: tabular-nums;
+      }
+      .kind span {
+        font-size: 12px;
+        color: var(--text-2);
+      }
+      .kind.zero b {
+        color: var(--text-3);
+      }
+      .events {
+        list-style: none;
+        margin: 14px 0 0;
+        padding: 0;
+        display: grid;
+      }
+      .event {
+        display: grid;
+        grid-template-columns: 8px 1fr auto;
+        gap: 10px;
+        align-items: baseline;
+        padding: 8px 0;
+        border-top: 1px solid var(--border);
+        font-size: 13px;
+      }
+      .event::before {
+        content: "";
+        width: 8px;
+        height: 8px;
+        border-radius: 50%;
+        background: var(--free);
+        transform: translateY(-1px);
+      }
+      .event time {
+        font-size: 12px;
+        color: var(--text-3);
+        font-variant-numeric: tabular-nums;
+        white-space: nowrap;
+      }
+      .clean {
+        margin-top: 14px;
+        padding: 14px;
+        border-radius: 12px;
+        background: color-mix(in srgb, var(--good) 10%, transparent);
+        font-size: 13px;
+        color: var(--text-2);
+        text-align: center;
+      }
+      .more {
+        margin-top: 10px;
+      }
+      .note {
+        padding: 22px;
+        border-radius: var(--radius);
+        background: var(--surface-2);
+        color: var(--text-2);
+        text-align: center;
+        font-size: 13.5px;
+      }
+      .heat-legend {
+        display: flex;
+        align-items: center;
+        gap: 4px;
+      }
+      .heat-legend i {
+        width: 12px;
+        height: 12px;
+      }
+      .onboarding {
+        text-align: center;
+        padding: 56px 24px;
+        display: grid;
+        justify-items: center;
+        gap: 12px;
+      }
+      .onboarding h2 {
+        font-family: var(--font-display);
+        font-size: 24px;
+        letter-spacing: -0.02em;
+      }
+      .steps {
+        display: grid;
+        grid-template-columns: repeat(3, minmax(0, 200px));
+        gap: 16px;
+        margin-top: 16px;
+        text-align: left;
+      }
+      .step {
+        padding: 16px;
+        border-radius: var(--radius);
+        background: var(--surface-2);
+        font-size: 13px;
+        color: var(--text-2);
+      }
+      .step b {
+        display: block;
+        color: var(--text);
+        margin-bottom: 4px;
+      }
+      .footnote {
+        margin-top: 12px;
+        font-size: 12px;
+        color: var(--text-3);
+      }
+      .rise:nth-child(2) { animation-delay: 50ms; }
+      .rise:nth-child(3) { animation-delay: 100ms; }
+      .rise:nth-child(4) { animation-delay: 150ms; }
+      @media (max-width: 900px) {
+        .kpis {
+          grid-template-columns: repeat(2, minmax(0, 1fr));
+        }
+        .two {
+          grid-template-columns: 1fr;
+        }
+      }
+      @media (max-width: 560px) {
+        .steps {
+          grid-template-columns: 1fr;
+        }
+        .row {
+          grid-template-columns: 16px minmax(80px, 1fr) 1fr 56px;
+        }
+        .row-share {
+          display: none;
+        }
+        .urge-head,
+        .urge-sites .row {
+          grid-template-columns: 16px minmax(70px, 1fr) 56px 64px;
+        }
+        .urge-head span:nth-child(3),
+        .urge-sites .spark-cell {
+          display: none;
+        }
+      }
+    </style>
+    <script type="module" src="dashboard.js"></script>
+  </head>
+  <body>
+    <main class="page">
+      <header class="topbar">
+        <a class="brand" href="dashboard.html"><span class="logo"></span>WorkWall</a>
+        <div class="topbar-right">
+          <span class="pill" id="status"></span>
+          <a class="btn ghost sm" href="options.html">Settings</a>
+        </div>
+      </header>
+
+      <div class="heading">
+        <div>
+          <h1>Where your time goes</h1>
+          <p class="range-label" id="range-label"></p>
+        </div>
+        <div class="segmented" role="group" aria-label="Time range" id="range">
+          <button data-days="1">Today</button>
+          <button data-days="7">7 days</button>
+          <button data-days="30">30 days</button>
+        </div>
+      </div>
+
+      <section class="card onboarding" id="onboarding" hidden>
+        <span class="logo" style="width: 48px; height: 48px; border-radius: 14px"></span>
+        <h2>Your stats will show up here</h2>
+        <p class="muted">WorkWall counts time on the active tab while you're at the computer. Nothing leaves this browser.</p>
+        <div class="steps">
+          <div class="step"><b>1 · Browse normally</b>Time is saved every minute.</div>
+          <div class="step"><b>2 · Hit a blocked site</b>During focus hours you'll see the focus screen instead.</div>
+          <div class="step"><b>3 · Come back here</b>See your top sites, daily rhythm and habits.</div>
+        </div>
+      </section>
+
+      <div id="content" class="grid">
+        <section class="grid kpis">
+          <div class="card kpi rise">
+            <span class="eyebrow">Browsing time</span>
+            <span class="kpi-value display" id="kpi-total"></span>
+            <span class="kpi-meta" id="kpi-total-meta"></span>
+          </div>
+          <div class="card kpi rise">
+            <span class="eyebrow">In focus hours</span>
+            <span class="kpi-value display" id="kpi-focus"></span>
+            <span class="kpi-meta" id="kpi-focus-meta"></span>
+          </div>
+          <div class="card kpi rise">
+            <span class="eyebrow">Blocked attempts</span>
+            <span class="kpi-value display" id="kpi-blocks"></span>
+            <span class="kpi-meta" id="kpi-blocks-meta"></span>
+          </div>
+          <div class="card kpi rise">
+            <span class="eyebrow">Rule breaks</span>
+            <span class="kpi-value display" id="kpi-breaks"></span>
+            <span class="kpi-meta" id="kpi-breaks-meta"></span>
+          </div>
+        </section>
+
+        <section class="card rise">
+          <div class="card-head">
+            <div>
+              <h2 class="card-title">Daily rhythm</h2>
+              <p class="card-sub" id="rhythm-sub"></p>
+            </div>
+            <div class="legend">
+              <span><i class="fill-focus"></i>Focus hours</span>
+              <span><i class="fill-free"></i>Free time</span>
+            </div>
+          </div>
+          <div id="rhythm"></div>
+          <details class="table-view"><summary>Show as table</summary><div id="rhythm-table"></div></details>
+        </section>
+
+        <section class="card rise">
+          <div class="card-head">
+            <div>
+              <h2 class="card-title">Is the habit fading?</h2>
+              <p class="card-sub" id="urge-sub"></p>
+            </div>
+            <div class="legend">
+              <span><i class="fill-attempt"></i>Blocked attempts</span>
+              <span><i class="trend-key"></i>Trend</span>
+            </div>
+          </div>
+          <div id="urge"></div>
+          <div class="urge-sites">
+            <div class="urge-head"><span></span><span>Site</span><span id="spark-label">Daily</span><span>Attempts</span><span>vs before</span></div>
+            <ul class="rows" id="urge-sites"></ul>
+          </div>
+          <details class="table-view"><summary>Show as table</summary><div id="urge-table"></div></details>
+        </section>
+
+        <section class="grid two">
+          <div class="card rise">
+            <div class="card-head">
+              <div>
+                <h2 class="card-title">Top sites</h2>
+                <p class="card-sub">Time on the active tab, idle time excluded.</p>
+              </div>
+            </div>
+            <ul class="rows" id="sites"></ul>
+            <button class="btn ghost sm more" id="more" hidden></button>
+          </div>
+          <div class="card rise">
+            <div class="card-head">
+              <div>
+                <h2 class="card-title">Rule breaks</h2>
+                <p class="card-sub">Times you weakened the block during focus hours.</p>
+              </div>
+            </div>
+            <div class="break-kinds" id="break-kinds"></div>
+            <ul class="events" id="events"></ul>
+          </div>
+        </section>
+
+        <section class="card rise">
+          <div class="card-head">
+            <div>
+              <h2 class="card-title">When you browse</h2>
+              <p class="card-sub">Total time by weekday and hour. Your focus hours are outlined.</p>
+            </div>
+            <div class="legend">
+              <span class="heat-legend">Less <i class="heat-1"></i><i class="heat-2"></i><i class="heat-3"></i><i class="heat-4"></i><i class="heat-5"></i><i class="heat-6"></i> More</span>
+              <span><i class="outline"></i>Focus hours</span>
+            </div>
+          </div>
+          <div id="heatmap"></div>
+          <details class="table-view"><summary>Show as table</summary><div id="heatmap-table"></div></details>
+          <p class="footnote">Focus hours shown with your current schedule.</p>
+        </section>
+      </div>
+    </main>
+  </body>
+</html>

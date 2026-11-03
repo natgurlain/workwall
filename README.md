@@ -5,6 +5,8 @@ during your focus hours and shows where your time actually goes.
 
 - **Blocks by schedule.** For example, 07:00–20:00 on weekdays. Blocked sites go to a calm focus screen with a
   countdown. Tabs already open on a blocked site are redirected when focus hours start.
+- **One-click blocking.** On any site, open the popup and click **Block this site**. During focus hours the tab is
+  blocked right away.
 - **Tracks your time.** Only the active tab of a focused window counts, and only while you're at the computer
   (idle after 5 minutes without input).
 - **Measures the reflex.** Every attempt to open a blocked site is counted per site and per hour. The dashboard shows
@@ -40,7 +42,8 @@ While developing, `npm run watch` recompiles TypeScript on save. After changing 
 2. Turn on **Developer mode** (top right).
 3. Click **Load unpacked** and choose the `dist` folder.
 4. Pin WorkWall: click the puzzle-piece icon in the toolbar, then the pin next to WorkWall.
-5. Click the WorkWall icon → **Settings** (gear) to set your sites and focus hours.
+5. Click the WorkWall icon → **Settings** (gear) to set your sites and focus hours. To block the site you're on,
+   open the popup and click **Block this site**.
 
 The same steps work in **Chrome** (`chrome://extensions`), **Edge** (`edge://extensions`) and other Chromium
 browsers.

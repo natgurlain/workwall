@@ -113,6 +113,18 @@
         grid-template-columns: 1fr 1fr;
         gap: 12px;
       }
+      .presets-row {
+        margin-bottom: 14px;
+      }
+      .preset {
+        font-variant-numeric: tabular-nums;
+      }
+      .preset[aria-pressed="true"] {
+        background: var(--accent-soft);
+        border-color: transparent;
+        color: var(--accent-strong);
+        box-shadow: none;
+      }
       .field {
         display: grid;
         gap: 6px;
@@ -257,14 +269,15 @@
             <p class="card-sub">Blocking turns on and off by itself. An end time earlier than the start runs overnight.</p>
           </div>
         </div>
+        <div class="row presets-row" id="hour-presets" role="group" aria-label="Common focus hours"></div>
         <div class="times">
           <label class="field">Starts<input class="input" type="time" id="start" /></label>
           <label class="field">Ends<input class="input" type="time" id="end" /></label>
         </div>
         <div class="days" id="days" role="group" aria-label="Days with focus hours"></div>
         <div class="row" style="margin-top: 12px">
-          <button class="btn ghost sm" id="weekdays">Weekdays</button>
-          <button class="btn ghost sm" id="everyday">Every day</button>
+          <button class="btn sm preset" id="weekdays">Weekdays</button>
+          <button class="btn sm preset" id="everyday">Every day</button>
         </div>
         <p class="summary" id="summary"></p>
       </section>

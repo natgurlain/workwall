@@ -24,6 +24,10 @@ const PRESETS: Record<string, string[]> = {
   News: ["news.ycombinator.com", "reddit.com", "cnn.com", "bbc.com", "theguardian.com"],
   Shopping: ["amazon.com", "ebay.com", "aliexpress.com", "temu.com", "etsy.com"],
 };
+/** Common focus hours as [start, end] in minutes after midnight. */
+const HOUR_PRESETS: [number, number][] = [[7 * 60, 20 * 60], [8 * 60, 16 * 60], [9 * 60, 17 * 60]];
+const WEEKDAYS = [1, 2, 3, 4, 5];
+const EVERY_DAY = [0, 1, 2, 3, 4, 5, 6];
 // Monday first; values are Date.getDay() numbers.
 const DAYS: [number, string, string][] = [
   [1, "M", "Monday"], [2, "T", "Tuesday"], [3, "W", "Wednesday"], [4, "T", "Thursday"],
@@ -115,6 +119,17 @@ function render(): void {
     presets.append(button);
   }
 
+  byId("hour-presets").replaceChildren(
+    ...HOUR_PRESETS.map(([startMin, endMin]) => {
+      const button = h("button", { className: "btn sm preset", type: "button", textContent: `${minutesToTime(startMin)}–${minutesToTime(endMin)}` });
+      button.setAttribute("aria-pressed", String(settings.startMin === startMin && settings.endMin === endMin));
+      button.addEventListener("click", () => void apply({ ...settings, startMin, endMin }));
+      return button;
+    }),
+  );
+  const sortedDays = [...settings.days].sort().join();
+  byId("weekdays").setAttribute("aria-pressed", String(sortedDays === WEEKDAYS.join()));
+  byId("everyday").setAttribute("aria-pressed", String(sortedDays === EVERY_DAY.join()));
   byId<HTMLInputElement>("start").value = minutesToTime(settings.startMin);
   byId<HTMLInputElement>("end").value = minutesToTime(settings.endMin);
   byId("days").replaceChildren(
@@ -174,8 +189,8 @@ for (const id of ["start", "end"] as const) {
     if (minutes !== null) void apply({ ...settings, [id === "start" ? "startMin" : "endMin"]: minutes });
   });
 }
-byId("weekdays").addEventListener("click", () => void apply({ ...settings, days: [1, 2, 3, 4, 5] }));
-byId("everyday").addEventListener("click", () => void apply({ ...settings, days: [0, 1, 2, 3, 4, 5, 6] }));
+byId("weekdays").addEventListener("click", () => void apply({ ...settings, days: WEEKDAYS }));
+byId("everyday").addEventListener("click", () => void apply({ ...settings, days: EVERY_DAY }));
 byId("export").addEventListener("click", () => void exportData());
 
 const clear = byId<HTMLButtonElement>("clear");

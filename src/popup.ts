@@ -13,6 +13,8 @@ import {
   favicon,
   findBlocked,
   formatDuration,
+  hostOf,
+  normalizeDomain,
   getDay,
   getSettings,
   h,
@@ -91,6 +93,34 @@ async function renderData(): Promise<void> {
   );
 }
 
+// ---- Block the current tab's site ----
+
+/** The active tab's site as a blocklist entry, or null for pages that can't be blocked (new tab, settings, files). */
+async function currentSite(): Promise<string | null> {
+  const [tab] = await chrome.tabs.query({ active: true, currentWindow: true });
+  return normalizeDomain(hostOf(tab?.url) ?? "");
+}
+
+async function renderCurrent(): Promise<void> {
+  const host = await currentSite();
+  byId("current").hidden = !host;
+  if (!host) return;
+  const covered = findBlocked(host, (await getSettings()).blocklist);
+  byId("current-site").replaceChildren(favicon(host), h("span", { textContent: host }));
+  const button = byId<HTMLButtonElement>("block-current");
+  button.disabled = !!covered;
+  button.textContent = !covered ? "Block this site" : covered === host ? "✓ Blocked" : `✓ Blocked via ${covered}`;
+}
+
+async function blockCurrent(): Promise<void> {
+  const host = await currentSite();
+  const settings = await getSettings();
+  // Adding never weakens the block, so it isn't a rule break. During focus hours the background
+  // redirects the tab right away when it sees the settings change.
+  if (host && !findBlocked(host, settings.blocklist)) await saveSettings({ ...settings, blocklist: [...settings.blocklist, host] });
+  await Promise.all([renderCurrent(), renderData()]);
+}
+
 // ---- Break flow ----
 
 function showBreak(open: boolean): void {
@@ -133,7 +163,9 @@ byId("take-break").addEventListener("click", () => showBreak(true));
 byId("cancel-break").addEventListener("click", () => showBreak(false));
 byId("start-break").addEventListener("click", () => void startBreak());
 byId("end-break").addEventListener("click", () => void endBreak());
+byId("block-current").addEventListener("click", () => void blockCurrent());
 
 void renderStatus();
 void renderData();
+void renderCurrent();
 setInterval(renderStatus, 1000);

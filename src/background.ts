@@ -174,8 +174,21 @@ async function syncBlocking(): Promise<void> {
   for (const tab of await chrome.tabs.query({ url: ["http://*/*", "https://*/*"] })) {
     const host = hostOf(tab.url);
     const domain = host && findBlocked(host, settings.blocklist);
-    if (tab.id !== undefined && domain) await chrome.tabs.update(tab.id, { url: `${blockedPage(domain)}&auto=1` });
+    if (tab.id !== undefined && domain) await chrome.tabs.update(tab.id, { url: chrome.runtime.getURL(`${blockedPage(domain)}&auto=1`) });
   }
+}
+
+/**
+ * Second line of defence for page loads the network rules never see: pages a site's service worker answers from its
+ * cache (x.com and YouTube do this) and in-app URL changes. A tab that lands on a blocked site during focus hours goes
+ * to the block page, counted as a real attempt.
+ */
+async function guardTab(tabId: number, url: string): Promise<void> {
+  const host = hostOf(url);
+  if (!host) return;
+  const settings = await getSettings();
+  const domain = isBlocking(settings) ? findBlocked(host, settings.blocklist) : undefined;
+  if (domain) await chrome.tabs.update(tabId, { url: chrome.runtime.getURL(blockedPage(domain)) });
 }
 
 // ---- Wiring ----
@@ -195,7 +208,11 @@ chrome.runtime.onStartup.addListener(() => {
 });
 chrome.alarms.onAlarm.addListener((alarm) => alarm.name === TICK_ALARM && tick());
 chrome.tabs.onActivated.addListener(() => void serial(updateVisit));
-chrome.tabs.onUpdated.addListener((_id, change, tab) => tab.active && change.url && void serial(updateVisit));
+chrome.tabs.onUpdated.addListener((id, change, tab) => {
+  if (!change.url) return;
+  void guardTab(id, change.url);
+  if (tab.active) void serial(updateVisit);
+});
 chrome.windows.onFocusChanged.addListener(() => void serial(updateVisit));
 chrome.idle.onStateChanged.addListener(() => void serial(updateVisit));
 // Any settings change that weakens an active block (from any page) is logged as a rule break.

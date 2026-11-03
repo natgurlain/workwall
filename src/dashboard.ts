@@ -242,7 +242,8 @@ function renderUrges(settings: Settings, dates: Date[], days: DayStats[], previo
         const prev = before_.get(domain) ?? 0;
         const diff = count - prev;
         const change = h("span", {
-          className: `change num-cell ${diff < 0 ? "down" : diff > 0 ? "up" : ""}`,
+          // Only color real comparisons; a site with no earlier attempts isn't "worse".
+          className: `change num-cell ${!prev ? "" : diff < 0 ? "down" : diff > 0 ? "up" : ""}`,
           textContent: !prev ? "new" : diff === 0 ? "same" : diff < 0 ? `▼ ${-diff} fewer` : `▲ ${diff} more`,
         });
         const values = series(domain);

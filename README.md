@@ -70,6 +70,10 @@ kept.
 Data lives in `chrome.storage.local`: `settings`, plus one `day:YYYY-MM-DD` entry per day holding seconds per domain
 per hour, blocked attempts per domain per hour, and that day's rule breaks.
 
+## Author
+
+Made by [@natgurlain](https://x.com/natgurlain). MIT licensed.
+
 ### Limits worth knowing
 
 - Turning the extension off can't be prevented, only logged. WorkWall notices when it's switched back on and records

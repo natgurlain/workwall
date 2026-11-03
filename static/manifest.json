@@ -3,6 +3,7 @@
   "name": "WorkWall",
   "version": "0.1.0",
   "description": "Blocks distracting sites during work hours and shows where your time goes.",
+  "homepage_url": "https://github.com/natgurlain/workwall",
   "permissions": ["declarativeNetRequest", "storage", "alarms", "tabs", "idle", "favicon"],
   "host_permissions": ["<all_urls>"],
   "background": { "service_worker": "background.js", "type": "module" },

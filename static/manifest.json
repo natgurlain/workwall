@@ -1,7 +1,7 @@
 {
   "manifest_version": 3,
   "name": "WorkWall",
-  "version": "0.1.0",
+  "version": "0.2.2",
   "description": "Blocks distracting sites during work hours and shows where your time goes.",
   "homepage_url": "https://github.com/natgurlain/workwall",
   "permissions": ["declarativeNetRequest", "storage", "alarms", "tabs", "idle", "favicon"],

@@ -1,6 +1,6 @@
 {
   "name": "workwall",
-  "version": "0.1.0",
+  "version": "0.2.2",
   "private": true,
   "description": "Brave/Chromium extension that blocks distracting sites during work hours and charts where your time goes.",
   "type": "module",

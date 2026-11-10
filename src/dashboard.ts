@@ -91,8 +91,12 @@ async function render(): Promise<void> {
   status.className = `pill ${isBlocking(settings, now) ? "on" : isScheduled(settings, now) ? "paused" : ""}`;
   status.textContent = describeStatus(settings, now).text;
 
-  const history = await getDays(lastDays(90, now));
-  const hasAnyData = history.some((d) => Object.keys(d.time).length || Object.keys(d.blocks).length || d.violations.length);
+  const historyDates = lastDays(90, now);
+  const history = await getDays(historyDates);
+  const firstTracked = history.findIndex((d) => Object.keys(d.time).length || Object.keys(d.blocks).length || d.violations.length);
+  const hasAnyData = firstTracked >= 0;
+  // Days before WorkWall recorded anything are unknown, not zero: keep them out of the trend.
+  const trackedSince = historyDates[Math.max(0, firstTracked)]!;
   byId("onboarding").hidden = hasAnyData;
   byId("content").hidden = !hasAnyData;
   if (!hasAnyData) return;
@@ -141,7 +145,7 @@ async function render(): Promise<void> {
     dataTable([range === 1 ? "Hour" : "Day", "Focus hours", "Free time", "Total"], columns.map((c) => [c.title, formatDuration(c.focus), formatDuration(c.free), formatDuration(c.focus + c.free)])),
   );
 
-  renderUrges(settings, dates, days, previous, blockTotal, prevBlockTotal, prevLabel);
+  renderUrges(settings, dates, days, previous, blockTotal, prevBlockTotal, prevLabel, trackedSince);
   renderSites(sites, total, settings);
   renderBreaks(breaks);
 
@@ -197,7 +201,7 @@ function renderSites(sites: [string, number][], total: number, settings: Setting
 }
 
 /** Blocked attempts over time: are fewer reflex visits happening? Per site with sparklines. */
-function renderUrges(settings: Settings, dates: Date[], days: DayStats[], previous: DayStats[], current: number, before: number, prevLabel: string): void {
+function renderUrges(settings: Settings, dates: Date[], days: DayStats[], previous: DayStats[], current: number, before: number, prevLabel: string, trackedSince: Date): void {
   // One value per column: hours for today, days otherwise.
   const series = (domain?: string): number[] => (range === 1 ? blockHours(days[0]!, domain) : days.map((d) => blockCount(d, domain)));
   const totals = series();
@@ -210,11 +214,11 @@ function renderUrges(settings: Settings, dates: Date[], days: DayStats[], previo
           value,
         },
   );
-  // Fit the trend only where blocking could happen: focus hours today, or days with focus hours.
+  // Fit the trend only where blocking could happen: focus hours today, or days with focus hours since tracking began.
   const inTrend =
     range === 1
       ? totals.map((_, hour) => isScheduled(settings, atHour(dates[0]!, hour)))
-      : dates.map((date) => Array.from({ length: 24 }, (_, hour) => isScheduled(settings, atHour(date, hour))).some(Boolean));
+      : dates.map((date) => date >= trackedSince && Array.from({ length: 24 }, (_, hour) => isScheduled(settings, atHour(date, hour))).some(Boolean));
   countColumns(byId("urge"), points, range === 1 || range === 30 ? 3 : 1, inTrend);
 
   let verdict: string;
